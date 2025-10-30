@@ -15,8 +15,7 @@ function Login() {
     useEffect(() => {
         const userId = localStorage.getItem('IdUser');
         if (userId) {
-            alert(`Ya has iniciado sesión. IdUsuario: ${userId}`);
-            navigate('/home');
+            navigate('/app');
         }
     }, [navigate]);
 
@@ -40,8 +39,7 @@ function Login() {
 
             if (response.ok) {
                 localStorage.setItem('IdUser', data.user.id);
-                alert(`¡Login exitoso! Bienvenido ${data.user.username}`);
-                navigate('/home');
+                navigate('/app');
             } else {
                 setError(data.error || 'Credenciales inválidas.');
             }

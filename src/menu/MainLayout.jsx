@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Navbar, Container, Button, Offcanvas, Nav } from 'react-bootstrap';
 // Importamos los iconos
 import { 
-  List as MenuIcon, HouseFill, Robot, BookmarkStar, GraphUp, BoxArrowRight, QuestionCircleFill 
+  List as MenuIcon, HouseFill, Robot, BookmarkStar, GraphUp, BoxArrowRight, QuestionCircleFill, Sliders, ShieldExclamation 
 } from 'react-bootstrap-icons';
 
 // --- ¡IMPORTANTE! ---
@@ -13,6 +13,8 @@ import Inicio from './inicio/Inicio';
 import AsistenteIA from './asistente/Asistente';
 import MiRecetario from './recetario/Recetario';
 import MonitorCalorias from './calorias/Calorias';
+import Preferencias from './preferencias/Preferencias';
+import Alergias from './alergias/Alergias';
 
 
 function MainLayout() {
@@ -59,6 +61,8 @@ function MainLayout() {
       case 'Asistente IA': return <Robot className="me-2" />;
       case 'Mi Recetario': return <BookmarkStar className="me-2" />;
       case 'Monitor de Calorías': return <GraphUp className="me-2" />;
+      case 'Mis Preferencias':return <Sliders className="me-2" />;
+      case 'Gestión de Alergias':return <ShieldExclamation className="me-2" />;
       default: return <QuestionCircleFill className="me-2" />;
     }
   };
@@ -75,6 +79,10 @@ function MainLayout() {
         return <MiRecetario />;
       case 'calorias':
         return <MonitorCalorias />;
+      case 'preferencias':
+        return <Preferencias />;
+      case 'alergias':
+        return <Alergias />;
       default:
         return <Inicio />;
     }

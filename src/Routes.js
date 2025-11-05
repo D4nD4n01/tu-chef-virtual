@@ -12,6 +12,10 @@ const ROUTES = {
     GET: '/allergies/get',
     SAVE: '/allergies/save'
   },
+  RECETARIO: {
+    GET: '/recetario/get',
+    SAVE: '/recetario/save'
+  },
   
   MENU:'/getMenu',
 

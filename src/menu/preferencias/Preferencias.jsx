@@ -73,7 +73,7 @@ function Preferencias() {
             }
 
             try {
-                const response = await fetch(URL + ROUTES.PREFERENCES.GET`?userId=${userId}`);
+                const response = await fetch(`${URL}${ROUTES.PREFERENCES.GET}?userId=${userId}`);
                 if (!response.ok) throw new Error('Error al cargar datos.');
 
                 const data = await response.json();
@@ -125,7 +125,7 @@ function Preferencias() {
         };
 
         try {
-            const response = await fetch(URL+ROUTES.PREFERENCES.SAVE, {
+            const response = await fetch(`${URL}${ROUTES.PREFERENCES.SAVE}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -1,11 +1,9 @@
-// src/menu/Alergias/Alergias.jsx
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Form, Button, Alert, Row, Col, Spinner, Badge } from 'react-bootstrap';
-// Importamos los iconos
 import { ShieldExclamation, Save, CheckCircleFill, ExclamationCircleFill, XCircleFill } from 'react-bootstrap-icons';
+import {URL,ROUTES} from '../../Routes'
 
-// --- Lista de Alergias Comunes (para los checkboxes) ---
-// El 'id' es lo que guardaremos en la base de datos
+
 const COMMON_ALLERGIES_DATA = [
     { id: 'mani', name: 'Maní (Cacahuete)' },
     { id: 'mariscos', name: 'Mariscos (Crustáceos)' },
@@ -33,7 +31,7 @@ function Alergias() {
         const loadData = async () => {
             const userId = localStorage.getItem('IdUser');
             try {
-                const response = await fetch(`http://localhost:3111/getAllergies?userId=${userId}`);
+                const response = await fetch(URL+ROUTES.ALLERGIES.GET`?userId=${userId}`);
                 if (!response.ok) throw new Error('Error al cargar datos.');
 
                 const data = await response.json(); // data es un array: ["mani", "sulfitos"]
@@ -110,7 +108,7 @@ function Alergias() {
         ];
 
         try {
-            const response = await fetch('http://localhost:3111/saveAllergies', {
+            const response = await fetch(URL + ROUTES.ALLERGIES.SAVE, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

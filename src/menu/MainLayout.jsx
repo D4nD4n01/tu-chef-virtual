@@ -15,6 +15,8 @@ import MiRecetario from './recetario/Recetario';
 import MonitorCalorias from './calorias/Calorias';
 import Preferencias from './preferencias/Preferencias';
 import Alergias from './alergias/Alergias';
+import {URL,ROUTES} from '../Routes'
+
 
 
 function MainLayout() {
@@ -32,7 +34,7 @@ function MainLayout() {
     const fetchMenu = async () => {
       try {
         // Asumiendo que tu servidor está en 3111 y la tabla es 'menu'
-        const response = await fetch('http://localhost:3111/getMenu'); 
+        const response = await fetch(URL + ROUTES.MENU); 
         if (!response.ok) throw new Error('No se pudo cargar el menú');
         
         const data = await response.json();

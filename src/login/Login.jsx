@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // Importamos los componentes de React-Bootstrap
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import './AuthBackground.css';
+import {URL,ROUTES} from '../Routes'
 
 function Login() {
     const [strUser, setStrUser] = useState('');
@@ -29,7 +30,7 @@ function Login() {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:3111/login', {
+            const response = await fetch(URL + ROUTES.LOGIN, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ strUser, password }),

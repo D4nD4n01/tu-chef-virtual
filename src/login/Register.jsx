@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import './AuthBackground.css';
+import { ROUTES } from '../Routes';
 
 function Register() {
     const [strUser, setStrUser] = useState('');
@@ -21,7 +22,7 @@ function Register() {
         }
 
         try {
-            const response = await fetch('http://localhost:3111/register', {
+            const response = await fetch(URL + ROUTES.REGISTER, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ strUser, strEmail, password }),

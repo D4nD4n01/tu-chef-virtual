@@ -18,9 +18,9 @@ const ROUTES = {
   },
   
   MENU:'/getMenu',
-
   LOGIN: '/login',
-  REGISTER: '/register'
+  REGISTER: '/register',
+  CHAT:'/chat'
 
 };
 

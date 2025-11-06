@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import './AuthBackground.css';
-import { ROUTES } from '../Routes';
+import { URL,ROUTES } from '../Routes';
 
 function Register() {
     const [strUser, setStrUser] = useState('');

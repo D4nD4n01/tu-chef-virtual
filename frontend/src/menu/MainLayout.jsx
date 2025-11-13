@@ -29,7 +29,7 @@ function MainLayout() {
   const [showMenu, setShowMenu] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const navigate = useNavigate();
-  const [activeComponent, setActiveComponent] = useState("inicio");
+  const [activeComponent, setActiveComponent] = useState("asistente");
 
   // 1. Carga el menú desde el servidor (esto no cambia)
   useEffect(() => {
@@ -76,8 +76,6 @@ function MainLayout() {
   // 3. Mapeo de Nombres (DB) a Iconos (React) (no cambia)
   const getMenuIcon = (strName) => {
     switch (strName) {
-      case "Inicio":
-        return <HouseFill className="me-2" />;
       case "Asistente IA":
         return <Robot className="me-2" />;
       case "Mi Recetario":
@@ -95,8 +93,6 @@ function MainLayout() {
   // Esta función renderiza el componente basado en el estado 'activeComponent'
   const renderActiveComponent = () => {
     switch (activeComponent) {
-      case "inicio":
-        return <Inicio />;
       case "asistente":
         return <AsistenteIA />;
       case "recetario":

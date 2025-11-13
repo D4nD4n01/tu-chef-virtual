@@ -83,7 +83,6 @@ function Preferencias() {
 
         const data = await response.json();
 
-        // --- CAMBIO AQUÍ: La lógica de carga es la misma ---
         setLikes(new Set(data.structured_likes || []));
         setDislikes(new Set(data.structured_dislikes || []));
         setCustomNotes(data.custom_notes || "");
@@ -273,7 +272,7 @@ function Preferencias() {
                 rows={4}
                 placeholder="Ej: Me gusta la comida muy especiada, sin picante, prefiero cocinar al vapor, soy intolerante a la lactosa (pero sin ser alergia grave), me gusta experimentar con nuevas cocinas..."
                 value={customNotes}
-                onChange={(e) => setCustomNotes(e.customNotes)}
+                onChange={(e) => setCustomNotes(e.target.value)}
               />
               <Form.Text className="text-muted">
                 Aquí puedes añadir cualquier detalle extra. El Asistente IA lo
@@ -283,9 +282,7 @@ function Preferencias() {
 
             <hr className="my-4" />
 
-            {/* Botón de Guardar y Alertas (No cambia) */}
             <div className="d-flex align-items-center justify-content-end">
-              {/* ... (resto del JSX idéntico) ... */}
               <Button
                 variant="primary"
                 type="submit"

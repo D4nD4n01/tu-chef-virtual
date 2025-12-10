@@ -20,9 +20,9 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 const dbConfig = {
   host: "127.0.0.1",
   user: "root",
-  password: "root",
-  database: "TuChefInteligente",
-  port: 3306,
+  password: "1234",
+  database: "tuchefinteligente",
+  port: 3010,
 };
 
 // (Tus middlewares no cambian)
@@ -406,7 +406,6 @@ app.post("/chat", async (req, res) => {
           : profileRows[0].jsonAllergies || [];
     }
 
-    // PASO 2: Construir el Prompt del Sistema (Las Reglas)
     let systemPrompt = `
             Eres "Tu Chef Virtual", un asistente culinario experto. Tu trabajo es ayudar al usuario a encontrar recetas.
             

@@ -514,6 +514,79 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+app.post("/gestures/like", async (req, res) => {
+  const { userId, receta } = req.body;
+
+  if (!userId || !receta) {
+    return res.status(400).json({ error: "Faltan datos (userId, receta)." });
+  }
+
+  const { titulo, descripcion, kcal, ingredientes, instrucciones } = receta;
+
+  let connection;
+  try {
+    connection = await mysql.createConnection(dbConfig);
+
+    await connection.execute(
+      `INSERT INTO tblRecetario 
+        (intIdUser, strTitulo, txtDescripcion, intKcal, jsonIngredientes, jsonInstrucciones)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        userId,
+        titulo,
+        descripcion || "",
+        kcal || null,
+        JSON.stringify(ingredientes || []),
+        JSON.stringify(instrucciones || []),
+      ]
+    );
+
+    await connection.end();
+    return res.json({ ok: true, message: "Receta guardada mediante LIKE." });
+  } catch (error) {
+    console.error("Error en /gestures/like:", error);
+    if (connection) await connection.end();
+    return res.status(500).json({ ok: false, error: "No se pudo guardar la receta." });
+  }
+});
+
+app.post("/gestures/dislike", async (req, res) => {
+  const { userId, prompt } = req.body;
+
+  if (!userId || !prompt) {
+    return res.status(400).json({ error: "Faltan datos (userId, prompt)." });
+  }
+
+  try {
+    // Volvemos a usar el mismo modelo que en /chat
+    const chat = model.startChat({
+      history: [
+        { role: "user", parts: [{ text: prompt }] }
+      ]
+    });
+
+    const result = await chat.sendMessage(prompt);
+    const response = result.response;
+    let text = response.candidates[0].content.parts[0].text;
+
+    // Intentar encontrar un JSON válido
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch && jsonMatch[0]) {
+      const json = JSON.parse(jsonMatch[0]);
+      return res.json({ ok: true, receta: json });
+    }
+
+    return res.status(500).json({
+      ok: false,
+      error: "La IA no devolvió una receta válida."
+    });
+
+  } catch (err) {
+    console.error("Error en /gestures/dislike:", err);
+    return res.status(500).json({ ok: false, error: "Error generando nueva receta." });
+  }
+});
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor de Autenticación corriendo en http://0.0.0.0:${PORT}`);
   console.log(`Rutas disponibles:`);
@@ -526,4 +599,6 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`  POST /preferences/save`);
   console.log(`  GET  /allergies/get`);
   console.log(`  POST /allergies/save`);
+  console.log(`  POST /gestures/like`);
+  console.log(`  POST /gestures/dislike`);
 });

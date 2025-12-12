@@ -14,13 +14,13 @@ const PORT = 3111;
 const JWT_SECRET = "esta-es-una-clave-secreta-temporal-para-tu-chef";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 // (Tu dbConfig no cambia)
 const dbConfig = {
   host: "127.0.0.1",
   user: "root",
-  password: "root",
+  password: "TecSistemas2023",
   database: "TuChefInteligente",
   port: 3306,
 };
@@ -406,7 +406,6 @@ app.post("/chat", async (req, res) => {
           : profileRows[0].jsonAllergies || [];
     }
 
-    // PASO 2: Construir el Prompt del Sistema (Las Reglas)
     let systemPrompt = `
             Eres "Tu Chef Virtual", un asistente culinario experto. Tu trabajo es ayudar al usuario a encontrar recetas.
             

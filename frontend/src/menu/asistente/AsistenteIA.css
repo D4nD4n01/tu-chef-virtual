@@ -60,3 +60,38 @@
   box-shadow: none !important;
   border-color: #ccc !important; /* o el color que uses normalmente */
 }
+
+.camera-container {
+  position: fixed;
+  top: 90px;        /* Mueve la cámara más abajo */
+  right: 20px;
+  z-index: 9999;
+  width: 220px;
+  height: 160px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Video ocupa todo */
+.camera-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Ocultar textos del overlay */
+.camera-container p,
+.camera-container span,
+.camera-container h1,
+.camera-container h2,
+.camera-container h3,
+.camera-container div {
+  color: transparent !important;
+}
+
+/* Si algún contenedor renderiza overlay, ocultarlo */
+.camera-container .overlay,
+.camera-container .status,
+.camera-container .progress {
+  display: none !important;
+}

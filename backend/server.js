@@ -14,15 +14,15 @@ const PORT = 3111;
 const JWT_SECRET = "esta-es-una-clave-secreta-temporal-para-tu-chef";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 // (Tu dbConfig no cambia)
 const dbConfig = {
   host: "127.0.0.1",
   user: "root",
-  password: "1234",
-  database: "tuchefinteligente",
-  port: 3010,
+  password: "TecSistemas2023",
+  database: "TuChefInteligente",
+  port: 3306,
 };
 
 // (Tus middlewares no cambian)

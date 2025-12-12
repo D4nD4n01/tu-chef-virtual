@@ -23,6 +23,7 @@ import {
 import { URL, ROUTES } from "../../Routes"; // Ajusta la ruta (../.. points to src/)
 import "./AsistenteIA.css"; // Crearemos este archivo para los estilos del chat
 import { successAlert, errorAlert } from "../../SweetAlert/Alerts.js";
+import HandGestureListener from "../../components/HandGestureListener.jsx";
 
 const RecipeCard = ({ receta, onSave, isSaved }) => (
   <Card className="mb-3 shadow-sm border-success">
@@ -78,6 +79,7 @@ const RecipeCard = ({ receta, onSave, isSaved }) => (
   </Card>
 );
 
+
 function AsistenteIA() {
   const [messages, setMessages] = useState([
     {
@@ -92,6 +94,7 @@ function AsistenteIA() {
   const [currentRecipe, setCurrentRecipe] = useState(null);
   const [isCurrentRecipeSaved, setIsCurrentRecipeSaved] = useState(false);
   const [error, setError] = useState("");
+  const [lastPrompt, setLastPrompt] = useState(null);
 
   const chatEndRef = useRef(null);
 
@@ -103,6 +106,8 @@ function AsistenteIA() {
     e.preventDefault();
     const messageText = newMessage.trim();
     if (!messageText) return;
+
+    setLastPrompt(messageText);
 
     const userId = localStorage.getItem("IdUser");
 
@@ -203,89 +208,155 @@ function AsistenteIA() {
     }
   };
 
+  const generarNuevaRecetaDesdePrompt = async () => {
+    // Validación: Si no hay prompt guardado, no podemos regenerar
+    if (!lastPrompt) {
+        console.warn("Intento de regenerar sin prompt previo");
+        return;
+    }
+
+    console.log("👎 Dislike detectado. Buscando otra opción para:", lastPrompt);
+
+    try {
+      // 1. Limpiamos la receta actual para que el usuario vea que está cargando
+      setCurrentRecipe(null); 
+      setIsLoading(true);
+
+      // 2. Pedimos nueva receta usando el mismo prompt anterior
+      const response = await fetch(`${URL}${ROUTES.CHAT}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: localStorage.getItem("IdUser"),
+          message: lastPrompt, // <--- Usamos la memoria guardada
+          history: [], // Historial vacío para no confundir a la IA con la receta anterior
+        }),
+      });
+
+      const data = await response.json();
+
+      const modelMessage = {
+        role: "model",
+        type: data.type || "text",
+        content: data.content || data.text,
+      };
+
+      setMessages((prev) => [...prev, modelMessage]);
+
+      if (modelMessage.type === "recipe") {
+        setCurrentRecipe(modelMessage.content);
+        setIsCurrentRecipeSaved(false); // Reseteamos el estado de guardado
+      }
+    } catch (err) {
+      console.error("ERROR al regenerar receta:", err);
+      setError("Error al intentar generar otra receta.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    const userId = localStorage.getItem("IdUser");
+
+    if (!userId) {
+      window.location.href = "/login";
+    }
+  }, []);
+
   return (
-    <Container className="mt-4">
-      <Card className="shadow-sm" style={{ height: "calc(100vh - 120px)" }}>
-        <Card.Header as="h5" className="d-flex align-items-center">
-          <Robot className="me-2 text-success" size={28} />
-          Asistente IA
-        </Card.Header>
+    <>
+      <div className="camera-container">
+        <HandGestureListener
+          recetaActual={currentRecipe}
+          onLike={handleSaveRecipe}
+          onDislike={generarNuevaRecetaDesdePrompt}
+        />
+      </div>
 
-        <Card.Body className="chat-window">
-          {messages.map((msg, index) => (
-            <div key={index} className={`chat-bubble ${msg.role}`}>
-              <div className="chat-bubble-content">
-                {msg.role === "user" ? (
-                  <PersonFill className="chat-icon" />
-                ) : (
+      <Container className="mt-4">
+
+        <Card className="shadow-sm" style={{ height: "calc(100vh - 120px)" }}>
+          <Card.Header as="h5" className="d-flex align-items-center">
+            <Robot className="me-2 text-success" size={28} />
+            Asistente IA
+          </Card.Header>
+
+          <Card.Body className="chat-window">
+            {messages.map((msg, index) => (
+              <div key={index} className={`chat-bubble ${msg.role}`}>
+                <div className="chat-bubble-content">
+                  {msg.role === "user" ? (
+                    <PersonFill className="chat-icon" />
+                  ) : (
+                    <Robot className="chat-icon" />
+                  )}
+                  {msg.type === "recipe" ? (
+                    <RecipeCard
+                      receta={msg.content}
+                      onSave={handleSaveRecipe}
+                      isSaved={
+                        currentRecipe === msg.content && isCurrentRecipeSaved
+                      }
+                    />
+                  ) : (
+                    <span>{msg.content}</span>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {isLoading && (
+              <div className="chat-bubble model">
+                <div className="chat-bubble-content">
                   <Robot className="chat-icon" />
-                )}
-                {msg.type === "recipe" ? (
-                  <RecipeCard
-                    receta={msg.content}
-                    onSave={handleSaveRecipe}
-                    isSaved={
-                      currentRecipe === msg.content && isCurrentRecipeSaved
-                    }
-                  />
-                ) : (
-                  <span>{msg.content}</span>
-                )}
+                  <Spinner animation="border" size="sm" />
+                  <span className="ms-2 fst-italic">
+                    El chef está pensando...
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            )}
 
-          {isLoading && (
-            <div className="chat-bubble model">
-              <div className="chat-bubble-content">
-                <Robot className="chat-icon" />
-                <Spinner animation="border" size="sm" />
-                <span className="ms-2 fst-italic">
-                  El chef está pensando...
-                </span>
-              </div>
-            </div>
-          )}
+            {error && (
+              <Alert variant="danger" className="mt-3">
+                {error}
+              </Alert>
+            )}
 
-          {error && (
-            <Alert variant="danger" className="mt-3">
-              {error}
-            </Alert>
-          )}
+            <div ref={chatEndRef} />
+          </Card.Body>
 
-          <div ref={chatEndRef} />
-        </Card.Body>
-
-        <Card.Footer>
-          <Form onSubmit={handleSubmit}>
-            <InputGroup>
-              <Form.Control
-                type="text"
-                placeholder="Pide una receta (ej: 'pollo con verduras')"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                disabled={isLoading}
-                autoFocus
-                style={{ outline: "none" }}
-              />
-              <Button variant="success" type="submit" disabled={isLoading}>
-                {isLoading ? (
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <SendFill />
-                )}
-              </Button>
-            </InputGroup>
-          </Form>
-        </Card.Footer>
-      </Card>
-    </Container>
+          <Card.Footer>
+            <Form onSubmit={handleSubmit}>
+              <InputGroup>
+                <Form.Control
+                  type="text"
+                  placeholder="Pide una receta (ej: 'pollo con verduras')"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  disabled={isLoading}
+                  autoFocus
+                  style={{ outline: "none" }}
+                />
+                <Button variant="success" type="submit" disabled={isLoading}>
+                  {isLoading ? (
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <SendFill />
+                  )}
+                </Button>
+              </InputGroup>
+            </Form>
+          </Card.Footer>
+        </Card>
+      </Container>
+    </>
   );
 }
 

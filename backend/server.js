@@ -20,9 +20,9 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 const dbConfig = {
   host: "127.0.0.1",
   user: "root",
-  password: "TecSistemas2023",
+  password: "1234",
   database: "TuChefInteligente",
-  port: 3306,
+  port: 3010,
 };
 
 // (Tus middlewares no cambian)

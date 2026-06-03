@@ -12,6 +12,11 @@ instalar dependencias
 *pip install Flask
 una vez descargadas, usar "python servidor_recetas.py" para correr. 
 
+para el servidor de python de streamlit:
+escribir en la terminal la siguiente linea:
+pip install streamlit pandas requests plotly
+una vez instaladas, usar el comando "streamlit run app.py" para correr el servidor.
+
 para la base de datos, ocupamos uniserver, por ello no podemos pasar el ide pero si la base de datos ubicada en la carpeta "datos".
 
 cualquier configuracion con la base de datos:

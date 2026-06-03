@@ -59,16 +59,29 @@ if vista == " Rotación por Usuario":
         
         col1, col2, col3 = st.columns(3)
         
+        # Función auxiliar para crear gráficas de dona
         def crear_dona(datos, titulo, color_sequence):
             datos = datos.copy()
             datos['Valor'] = 1 
             if datos.empty:
-                return px.pie(title=f"Sin {titulo.lower()}", hole=0.6)
+                fig_empty = px.pie(title=f"Sin {titulo.lower()}", hole=0.6)
+                fig_empty.update_layout(title_font_size=24)
+                return fig_empty
             
             fig = px.pie(datos, values='Valor', names='strAlimento', title=titulo, hole=0.6,
                          color_discrete_sequence=color_sequence)
-            fig.update_traces(textposition='inside', textinfo='label')
-            fig.update_layout(showlegend=False)
+            
+            fig.update_traces(
+                textposition='inside', 
+                textinfo='label', 
+                textfont_size=18 
+            )
+            
+            fig.update_layout(
+                showlegend=False,
+                title_font_size=24 
+            )
+            
             return fig
 
         with col1:

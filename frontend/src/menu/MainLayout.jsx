@@ -14,6 +14,7 @@ import {
   QuestionCircleFill,
   Sliders,
   ShieldExclamation,
+  CardChecklist
 } from "react-bootstrap-icons";
 
 // Importamos TODOS los componentes que el menú puede cargar
@@ -76,6 +77,8 @@ function MainLayout() {
   // 3. Mapeo de Nombres (DB) a Iconos (React) (no cambia)
   const getMenuIcon = (strName) => {
     switch (strName) {
+      case "Inicio":
+        return <GraphUp className="me-2" />;
       case "Asistente IA":
         return <Robot className="me-2" />;
       case "Mi Recetario":
@@ -97,7 +100,7 @@ function MainLayout() {
         return <AsistenteIA />;
       case "recetario":
         return <MiRecetario />;
-      case "calorias":
+      case "inicio":
         return <MonitorCalorias />;
       case "preferencias":
         return <Preferencias />;

@@ -20,7 +20,8 @@ const ROUTES = {
   MENU:'/getMenu',
   LOGIN: '/login',
   REGISTER: '/register',
-  CHAT:'/chat'
+  CHAT:'/chat',
+  DASHBOARD:'/getDashboard'
 
 };
 

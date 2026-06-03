@@ -1,3 +1,9 @@
+
+------------------------ DOCUMENTACION -----------------------------------------------------
+El documento que creamos con nuestra documentacion se encuentra aquí:
+https://tecnmtcm-my.sharepoint.com/:p:/g/personal/l21070319_cdmadero_tecnm_mx/IQAct9JXKEbxTI_0pKSRdKK6ASHUPUVNr6DM8otw9oUGzhg?e=4lGf3D
+
+------------------------ INSTRUCCIONES DE USO ----------------------------------------------
 para react:
 se ocupa node y java jdk para poder usarse
 usar en la terminal "npm i" para descargar las dependencias. 

@@ -513,8 +513,118 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+app.get("/getDashboard", async (req, res) => {
+  let connection;
+
+  try {
+    connection = await mysql.createConnection(dbConfig);
+    
+    // Hacemos un JOIN para traer strUser desde tblUsers asociado al intIdUser
+    const query = `
+      SELECT 
+        p.intIdProfile, 
+        p.intIdUser, 
+        u.strUser, 
+        p.jsonPreferences, 
+        p.jsonAllergies 
+      FROM tblPerfilCulinario p
+      JOIN tblUsers u ON p.intIdUser = u.intIdUser
+    `;
+    
+    const [rows] = await connection.execute(query);
+
+    const dashboardData = [];
+    let uniqueIdCounter = 1;
+
+    for (const row of rows) {
+      // Extraemos también strUser de la fila
+      const { intIdUser, strUser, jsonPreferences, jsonAllergies } = row;
+
+      // 1. Parsear jsonPreferences con manejo de errores
+      let prefs = {};
+      try {
+        if (jsonPreferences) {
+          prefs = typeof jsonPreferences === "string" ? JSON.parse(jsonPreferences) : jsonPreferences;
+        }
+      } catch (e) {
+        console.error(`Error parseando jsonPreferences para el usuario ${intIdUser}:`, e);
+      }
+
+      // 2. Parsear jsonAllergies
+      let allergies = [];
+      try {
+        if (jsonAllergies) {
+          if (typeof jsonAllergies === "string") {
+            if (jsonAllergies.trim().startsWith("[")) {
+              allergies = JSON.parse(jsonAllergies);
+            } else {
+              allergies = jsonAllergies.split(",").map((a) => a.trim()).filter((a) => a);
+            }
+          } else {
+            allergies = jsonAllergies; 
+          }
+        }
+      } catch (e) {
+        console.warn(`Error parseando jsonAllergies para el usuario ${intIdUser}, convirtiendo manualmente...`);
+      }
+
+      // 3. Mapear Gustos (1)
+      if (prefs.structured_likes && Array.isArray(prefs.structured_likes)) {
+        prefs.structured_likes.forEach((alimento) => {
+          dashboardData.push({
+            id: uniqueIdCounter++,
+            idUser: intIdUser,
+            strUser: strUser, // Agregado aquí
+            strAlimento: alimento,
+            strTipo: "Gusto",
+            intTipo: 1,
+          });
+        });
+      }
+
+      // 4. Mapear Disgustos (2)
+      if (prefs.structured_dislikes && Array.isArray(prefs.structured_dislikes)) {
+        prefs.structured_dislikes.forEach((alimento) => {
+          dashboardData.push({
+            id: uniqueIdCounter++,
+            idUser: intIdUser,
+            strUser: strUser, // Agregado aquí
+            strAlimento: alimento,
+            strTipo: "Disgusto",
+            intTipo: 2,
+          });
+        });
+      }
+
+      // 5. Mapear Alergias (3)
+      if (Array.isArray(allergies)) {
+        allergies.forEach((alimento) => {
+          dashboardData.push({
+            id: uniqueIdCounter++,
+            idUser: intIdUser,
+            strUser: strUser, // Agregado aquí
+            strAlimento: alimento,
+            strTipo: "Alergia",
+            intTipo: 3,
+          });
+        });
+      }
+    }
+
+    res.json(dashboardData);
+
+  } catch (error) {
+    console.error("Error en /getDashboard:", error);
+    res.status(500).json({ error: "Error interno del servidor al construir el dashboard." });
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
+  }
+});
+
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Servidor de Autenticación corriendo en http://0.0.0.0:${PORT}`);
+  console.log(`Servidor de Autenticación corriendo en http://0.0.0.1:${PORT}`);
   console.log(`Rutas disponibles:`);
   console.log(`  POST /register`);
   console.log(`  POST /login`);
@@ -525,4 +635,5 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`  POST /preferences/save`);
   console.log(`  GET  /allergies/get`);
   console.log(`  POST /allergies/save`);
+  console.log(`  GET /getDashboard`)
 });

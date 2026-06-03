@@ -10,7 +10,7 @@ export default function HandGestureListener({ recetaActual, onLike, onDislike })
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get("http://172.16.196.212:5000/status");
+        const res = await axios.get("http://localhost:5000/status");
         const data = res.data;
         
         setStatus(data);
@@ -57,7 +57,7 @@ export default function HandGestureListener({ recetaActual, onLike, onDislike })
   return (
     <div style={{ position: "fixed", bottom: 20, right: 20, zIndex: 1000 }}>
       <img
-        src="http://172.16.196.212:5000/video_feed"
+        src="http://localhost:5000/video_feed"
         style={{
           width: "220px",
           height: "165px",

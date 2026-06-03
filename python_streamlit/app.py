@@ -97,7 +97,7 @@ if vista == " Rotación por Usuario":
             st.plotly_chart(crear_dona(df_alergias, "Alergias", px.colors.sequential.Reds), use_container_width=True)
 
         # Lógica para recargar la página (SOLO ocurre si esta vista está activa)
-        time.sleep(5)
+        time.sleep(3)
         st.session_state.user_idx = (st.session_state.user_idx + 1) % len(usuarios)
         st.rerun()
 
